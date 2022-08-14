@@ -1,24 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import io from "socket.io-client";
 
-function App() {
+const socket = io("http://localhost:3001");
+
+const App = () => {
+  const [message, setMessage] = useState('');
+  const [messageReceived, setMessageReceived] = useState('');
+  const [room, setRoom] = useState('');
+
+  const sendMessage = () => {
+    socket.emit('sendMessage', {message, room});
+    console.log(socket);
+  }
+
+  socket.on('userLeft', (data) => {
+    console.log(data);
+  });
+
+  socket.on('joinToRoom', (data) => {
+    setRoom(data);
+    socket.emit('joinRoom', data);
+  });
+  
+  useEffect(() => {
+    socket.on('receiveMessage', (message) => {
+      setMessageReceived(message);
+      console.log(message);
+    });
+  }, [socket]);
+ 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" onChange={(event) => setMessage(event.target.value)}/>
+      <button onClick={sendMessage}>send</button>
+      <h1>{messageReceived}</h1>
     </div>
   );
 }
