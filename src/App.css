@@ -1,0 +1,11 @@
+.Mui-focused{
+    border: 1px dashed rgb(255, 0, 0)
+}
+
+div.Mui-disabled{
+    background-color: grey;
+}
+
+#root{
+    height: 100vh;
+}
