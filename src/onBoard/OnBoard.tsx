@@ -1,25 +1,14 @@
-import { styled } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { FC, useContext } from "react";
+import { Socket } from "socket.io-client";
 import { ColorContext } from "../context/colorContext";
 import { CreateNewGame } from "./CreateNewGame";
 
-export const OnBoard = (props: any) => {
-  const color = React.useContext(ColorContext);
-  const socket = props.socket;
-  const room = props.room;
+interface IOnBoardProps {
+  socket: Socket;
+  setUserName: (name: string) => void;
+}
+export const OnBoard: FC<IOnBoardProps> = ({socket, setUserName}) => {
+  const color = useContext(ColorContext);
 
-  const [message, setMessage] = useState('');
-  const [messageReceived, setMessageReceived] = useState('');
-  const sendMessage = () => {
-    socket.emit('sendMessage', {message, room});
-    console.log(socket);
-  }
-  useEffect(() => {
-      socket.on('receiveMessage', (message: any) => {
-        setMessageReceived(message);
-        console.log(message);
-      });
-  }, [socket]);
-
-  return <CreateNewGame didRedirect = {color.playerDidRedirect} setUserName = {props.setUserName} socket={props.socket} room={props.room}/>
+  return <CreateNewGame didRedirect = {color.playerDidRedirect} setUserName = {setUserName} socket={socket}/>
 }

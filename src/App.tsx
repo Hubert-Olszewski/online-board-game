@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter, Route, Link, Routes, Navigate } from "react-router-dom";
 import './App.css';
 import io from "socket.io-client";
@@ -13,46 +13,29 @@ export const domainClientURL = "http://localhost:3000";
 const socket = io(domainServerUrl);
 
 const App = () => {
-  const [room, setRoom] = useState('');
+  const [didRedirect, setDidRedirect] = useState<boolean>(false);
+  const [userName, setUserName] = useState<string>('');
 
-  socket.on('userLeft', (data) => {
-    console.log(data);
-  });
-
-  socket.on('joinToRoom', (data) => {
-    setRoom(data);
-    socket.emit('joinRoom', data);
-  });
-
-  const [didRedirect, setDidRedirect] = React.useState(false);
-
-  const playerDidRedirect = React.useCallback(() => {
+  const playerDidRedirect = useCallback(() => {
     setDidRedirect(true);
   }, []);
-
-  const playerDidNotRedirect = React.useCallback(() => {
+  const playerDidNotRedirect = useCallback(() => {
     setDidRedirect(false);
   }, []);
-
-  const [userName, setUserName] = React.useState('');
 
   return (
     <ColorContext.Provider value={{didRedirect: didRedirect, playerDidRedirect: playerDidRedirect, playerDidNotRedirect: playerDidNotRedirect}}>
       <BrowserRouter>
         <Routes>
           <Route path={routes.root} element={<Navigate to={routes.createNewGame}/>} />
-          <Route path={routes.createNewGame} element={<OnBoard socket={socket} room={room} setUserName={setUserName}/>} />
-          <Route path={routes.game} element={<React.Fragment>
-            {didRedirect ?
-              <React.Fragment>
-                <JoinGame socket={socket} userName={userName} isCreator={true}></JoinGame>
-                {/* TODO: Game field components */}
-              </React.Fragment>
-              :
-              <JoinRoom socket={socket}></JoinRoom>
-            }
-          </React.Fragment>}>
-          </Route>
+          <Route path={routes.createNewGame} element={<OnBoard socket={socket} setUserName={setUserName}/>} />
+          <Route path={routes.game} element=
+          {
+            didRedirect ?
+                <JoinGame socket={socket} userName={userName} isCreator={true}/>
+                :
+                <JoinRoom socket={socket}/>
+          }></Route>
           <Route path='*' element={<Navigate to={routes.createNewGame}/>} />
         </Routes>
       </BrowserRouter>

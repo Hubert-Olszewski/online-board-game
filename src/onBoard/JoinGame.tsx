@@ -6,64 +6,95 @@ import { GameView } from "./Views/GameView";
 import { NoConnectionView } from "./Views/NoConnectionView";
 import { ColorContext } from "../context/colorContext";
 import { WaitingRoomView } from "./Views/WaitingRoomView";
+import { Socket } from "socket.io-client";
+import { FC } from "react";
+import { notifyInfo } from "../utils/toasts";
 
-export const JoinGame = (props: any) => {
-    const socket = props.socket;
-    const color = useContext(ColorContext)
+
+interface IJoinGameProps{
+    socket: Socket;
+    userName: string;
+    isCreator: boolean;
+}
+
+interface IGameRoomData{
+    gameId : string | undefined;
+    userName : string;
+    isCreator: boolean;
+}
+
+interface IOponentUserData{
+    userName: string;
+    gameId: string;
+    socketId: string;
+}
+
+interface IUserGameRoomData{
+    gameId : string | undefined;
+    userName : string;
+    isCreator: boolean;
+    mySocketId: string;
+}
+
+export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
+    // const color = useContext(ColorContext);
     const { gameid } = useParams();
-    const [opponentSocketId, setOpponentSocketId] = useState('')
-    const [opponentDidJoinTheGame, setDidOpponentJoinGame] = useState(false)
-    const [opponentUserName, setOpponentUserName] = useState('')
-    const [gameSessionDoesNotExist, setGameSessionDoesntExist] = useState(false)
-    const [gameRoomData, setGameRoomData] = useState({
+    const [opponentSocketId, setOpponentSocketId] = useState<string>('');
+    const [opponentDidJoinTheGame, setDidOpponentJoinGame] = useState<boolean>(false);
+    const [opponentUserName, setOpponentUserName] = useState<string>('');
+    const [gameSessionDoesNotExist, setGameSessionDoesntExist] = useState<boolean>(false);
+    const [gameRoomData, setGameRoomData] = useState<IGameRoomData>({
         gameId : gameid,
-        userName : props.userName,
-        isCreator: props.isCreator
+        userName : userName,
+        isCreator: isCreator
     });
 
     useEffect(() => {
-        socket.on("playerJoinedRoom", (statusUpdate: any) => {
-            console.log("A new player has joined the room! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
+        socket.on("playerJoinedRoom", (statusUpdate: IUserGameRoomData) => {
+            console.log("A new player has joined the room! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " comingSocket: " + statusUpdate.mySocketId + ' LocalSocket: ' + socket.id);
+            notifyInfo(`A new player, ${statusUpdate.userName} has joined the room!`);
             if (socket.id !== statusUpdate.mySocketId) {
-                setOpponentSocketId(statusUpdate.mySocketId)
+                setOpponentSocketId(statusUpdate.mySocketId);
             }
         });
 
-        socket.on("status", (statusUpdate: any) => {
-            console.log(statusUpdate)
-            alert(statusUpdate)
+        socket.on("status", (statusUpdate: string) => {
+            console.log(statusUpdate);
+            alert(statusUpdate);
             if (statusUpdate === 'This game session does not exist.' || statusUpdate === 'There are already 2 people playing in this room.') {
-                setGameSessionDoesntExist(true)
+                setGameSessionDoesntExist(true);
             }
         });
 
-        socket.on('start game', (opponentUserName: any) => {
-            console.log("START!")
-            if (opponentUserName !== props.myUserName) {
-                setOpponentUserName(opponentUserName)
-                setDidOpponentJoinGame(true) 
+        socket.on('startGame', (opponentUserName: string) => {
+            console.log("START!");
+            if (opponentUserName !== userName) {
+                console.log('Start: ' + opponentUserName);
+                setOpponentUserName(opponentUserName);
+                setDidOpponentJoinGame(true); 
             } else {
-                // in chessGame, pass opponentUserName as a prop and label it as the enemy. 
-                // in chessGame, use reactContext to get your own userName
                 // socket.emit('myUserName')
-                socket.emit('request username', gameid)
+                console.log('requestUsername: ' + opponentUserName);
+                socket.emit('requestUsername', gameRoomData.gameId);
             }
         })
     
     
-        socket.on('give userName', (socketId: any) => {
+        socket.on('giveUserName', (socketId: string) => {
+            // console.log('giveUserNameBefore: ' + socketId);
             if (socket.id !== socketId) {
-                console.log("give userName stage: " + props.myUserName)
-                socket.emit('recieved userName', {userName: props.myUserName, gameId: gameid})
+                console.log("giveUserName: " + gameRoomData.userName);
+                socket.emit('recievedUserName', {userName: gameRoomData.userName, gameId: gameRoomData.gameId});
             }
         })
     
-        socket.on('get Opponent UserName', (data: any) => {
+        socket.on('getOpponentUserName', (data: IOponentUserData) => {
+            // console.log('getOpponentUserNameBefore');
             if (socket.id !== data.socketId) {
-                setOpponentUserName(data.userName)
-                console.log('data.socketId: data.socketId')
-                setOpponentSocketId(data.socketId)
-                setDidOpponentJoinGame(true) 
+                console.log('Oponent: ' + data.userName);
+                setOpponentUserName(data.userName);
+                setOpponentSocketId(data.socketId);
+                setDidOpponentJoinGame(true);
             }
         })
 
@@ -73,17 +104,15 @@ export const JoinGame = (props: any) => {
 
     return(
         <Stack>
-            <Typography variant="h3" textAlign={'center'}>Welcome to the Online Board Game!</Typography>
-            <React.Fragment>
+            <Typography variant="h3" textAlign={'center'} color={'green'}>Welcome to the Online Board Game!</Typography>
                 {
                     opponentDidJoinTheGame ? <GameView></GameView> 
                     : 
                     gameSessionDoesNotExist ? 
-                        <NoConnectionView></NoConnectionView>
+                        <NoConnectionView/>
                         :
-                        <WaitingRoomView gameId={gameid} ></WaitingRoomView>
+                        <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
                 }
-            </React.Fragment>
         </Stack>
     );
 }
