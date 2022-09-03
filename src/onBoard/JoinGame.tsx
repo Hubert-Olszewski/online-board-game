@@ -52,10 +52,45 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
     useEffect(() => {
         socket.on("playerJoinedRoom", (statusUpdate: IUserGameRoomData) => {
             console.log("A new player has joined the room! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " comingSocket: " + statusUpdate.mySocketId + ' LocalSocket: ' + socket.id);
-            notifyInfo(`A new player, ${statusUpdate.userName} has joined the room!`);
+            // notifyInfo(`A new player, ${statusUpdate.userName} has joined the room!`);
             if (socket.id !== statusUpdate.mySocketId) {
                 setOpponentSocketId(statusUpdate.mySocketId);
             }
+        });
+
+        socket.on('startGame', (opponentUserName: string) => {
+            console.log("START!");
+            if (opponentUserName !== userName) {
+                console.log('OpponentName', opponentUserName);
+                setOpponentUserName(opponentUserName);
+                setDidOpponentJoinGame(true); 
+            } else {
+                // socket.emit('myUserName')
+                console.log('requestUsername', opponentUserName);
+                socket.emit('requestUsername', gameRoomData.gameId);
+            }
+        });
+    
+        socket.on('giveUserName', (socketId: string) => {
+            // console.log('giveUserNameBefore: ' + socketId);
+            if (socket.id !== socketId) {
+                console.log("giveUserName: " + gameRoomData.userName);
+                socket.emit('recievedUserName', {userName: gameRoomData.userName, gameId: gameRoomData.gameId});
+            }
+        });
+    
+        socket.on('getOpponentUserName', (data: IOponentUserData) => {
+            // console.log('getOpponentUserNameBefore');
+            if (socket.id !== data.socketId) {
+                console.log('Oponent: ' + data.userName);
+                setOpponentUserName(data.userName);
+                setOpponentSocketId(data.socketId);
+                setDidOpponentJoinGame(true);
+            }
+        });
+
+        socket.on('onDisconnect', (data: any) => {
+            console.log('User has left: ', data);
         });
 
         socket.on("status", (statusUpdate: string) => {
@@ -66,38 +101,6 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
             }
         });
 
-        socket.on('startGame', (opponentUserName: string) => {
-            console.log("START!");
-            if (opponentUserName !== userName) {
-                console.log('Start: ' + opponentUserName);
-                setOpponentUserName(opponentUserName);
-                setDidOpponentJoinGame(true); 
-            } else {
-                // socket.emit('myUserName')
-                console.log('requestUsername: ' + opponentUserName);
-                socket.emit('requestUsername', gameRoomData.gameId);
-            }
-        })
-    
-    
-        socket.on('giveUserName', (socketId: string) => {
-            // console.log('giveUserNameBefore: ' + socketId);
-            if (socket.id !== socketId) {
-                console.log("giveUserName: " + gameRoomData.userName);
-                socket.emit('recievedUserName', {userName: gameRoomData.userName, gameId: gameRoomData.gameId});
-            }
-        })
-    
-        socket.on('getOpponentUserName', (data: IOponentUserData) => {
-            // console.log('getOpponentUserNameBefore');
-            if (socket.id !== data.socketId) {
-                console.log('Oponent: ' + data.userName);
-                setOpponentUserName(data.userName);
-                setOpponentSocketId(data.socketId);
-                setDidOpponentJoinGame(true);
-            }
-        })
-
     }, []);
 
     socket.emit("playerJoinGame", gameRoomData);
@@ -106,7 +109,7 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
         <Stack>
             <Typography variant="h3" textAlign={'center'} color={'green'}>Welcome to the Online Board Game!</Typography>
                 {
-                    opponentDidJoinTheGame ? <GameView></GameView> 
+                    opponentDidJoinTheGame ? <GameView socket={socket} gameId={gameRoomData.gameId} userName={gameRoomData.userName} opponentUserName={opponentUserName}></GameView> 
                     : 
                     gameSessionDoesNotExist ? 
                         <NoConnectionView/>
