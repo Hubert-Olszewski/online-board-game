@@ -54,7 +54,7 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId, userName, opponen
 
     return (
         <Stack sx={{padding: '15px', width: '25vw', margin:0, position: 'relative', left: '75%'}}>
-            <Box aria-label="empty textarea" style={{border:'1px solid black', overflow:'auto', height: '80vh', fontSize: '18px', backgroundColor: 'white' }}>{ messageStorage.map(item => <Typography>{item}</Typography>) }</Box>
+            <Box aria-label="empty textarea" style={{border:'1px solid black', overflow:'auto', height: '80vh', fontSize: '18px', backgroundColor: 'white' }}>{ messageStorage.map((item, index) => <Typography key={index} >{item}</Typography>) }</Box>
             <Stack>
                 <TextareaAutosize aria-label="empty textarea" style={{ fontSize: '18px', resize: 'none' }} value={message} onChange={setInputValue} onKeyDown={handleKeyDown} placeholder={'Type your message here...'}/>
                 <SendButton onClick={sendMessage}>Send</SendButton>
