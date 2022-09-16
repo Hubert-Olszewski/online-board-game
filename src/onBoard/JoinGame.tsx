@@ -1,14 +1,13 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/system";
-import React, { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { GameView } from "./Views/GameView";
 import { NoConnectionView } from "./Views/NoConnectionView";
-import { ColorContext } from "../context/colorContext";
 import { WaitingRoomView } from "./Views/WaitingRoomView";
 import { Socket } from "socket.io-client";
 import { FC } from "react";
-import { notifyInfo } from "../utils/toasts";
+import { FullRoomView } from "./Views/FullRoomView";
 
 
 interface IJoinGameProps{
@@ -40,9 +39,10 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
     // const color = useContext(ColorContext);
     const { gameid } = useParams();
     const [opponentSocketId, setOpponentSocketId] = useState<string>('');
-    const [opponentDidJoinTheGame, setDidOpponentJoinGame] = useState<boolean>(false);
     const [opponentUserName, setOpponentUserName] = useState<string>('');
+    const [opponentDidJoinTheGame, setDidOpponentJoinGame] = useState<boolean>(false);
     const [gameSessionDoesNotExist, setGameSessionDoesntExist] = useState<boolean>(false);
+    const [isGameRoomFull, setIsGameRoomFull] = useState<boolean>(false);
     const [gameRoomData, setGameRoomData] = useState<IGameRoomData>({
         gameId : gameid,
         userName : userName,
@@ -94,10 +94,15 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
         });
 
         socket.on("status", (statusUpdate: string) => {
-            console.log(statusUpdate);
-            alert(statusUpdate);
-            if (statusUpdate === 'This game session does not exist.' || statusUpdate === 'There are already 2 people playing in this room.') {
-                setGameSessionDoesntExist(true);
+            switch (statusUpdate) {
+                case 'gameSessionDoesNotExist':
+                    setGameSessionDoesntExist(true);
+                    break;
+                case 'fullRoom':
+                    setIsGameRoomFull(true);
+                    break;
+                default:
+                    break;
             }
         });
 
@@ -113,6 +118,9 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
                     : 
                     gameSessionDoesNotExist ? 
                         <NoConnectionView/>
+                        :
+                        isGameRoomFull ?
+                        <FullRoomView />
                         :
                         <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
                 }
