@@ -1,7 +1,7 @@
 import { TextareaAutosize, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { FC } from "react";
-import { domainClientURL } from "../../App";
+import { domainClientURL } from "../../api/socket";
 
 interface IUserName{
     gameId: string | undefined;

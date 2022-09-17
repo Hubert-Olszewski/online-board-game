@@ -116,13 +116,11 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
                 {
                     opponentDidJoinTheGame ? <GameView socket={socket} gameId={gameRoomData.gameId} userName={gameRoomData.userName} opponentUserName={opponentUserName}></GameView> 
                     : 
-                    gameSessionDoesNotExist ? 
-                        <NoConnectionView/>
+                        gameSessionDoesNotExist ? <NoConnectionView/>
                         :
-                        isGameRoomFull ?
-                        <FullRoomView />
-                        :
-                        <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
+                            isGameRoomFull ? <FullRoomView />
+                            :
+                            <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
                 }
         </Stack>
     );
