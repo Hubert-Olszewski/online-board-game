@@ -43,4 +43,4 @@ Users can play their friends anonymously via link. \
 Users are also able to chat with each other during the game. \
 Tech stack: React, Node.js, Express, Socket.io 
 
-Link to the [backend](https://github.com/Hubert-Olszewski/online-board-game)
+Link to the [backend](https://github.com/Hubert-Olszewski/online-board-game-backend)
