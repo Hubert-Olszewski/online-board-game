@@ -89,8 +89,13 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
             }
         });
 
-        socket.on('onDisconnect', (data: any) => {
+        socket.on('onDisconnect', (data) => {
             console.log('User has left: ', data);
+        });
+
+        socket.on('disconnect', (reason) => {
+            console.log('disconnect', reason, socket.id);
+            setGameSessionDoesntExist(true);
         });
 
         socket.on("status", (statusUpdate: string) => {
