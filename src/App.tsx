@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import './App.css';
 import { OnBoard } from './onBoard/OnBoard';
 import { ColorContext } from './context/colorContext';
 import routes from './utils/routes';
 import { JoinRoom } from './onBoard/JoinRoom';
 import { JoinGame } from './onBoard/JoinGame';
 import socket from './api/socket';
+import './styles/App.css';
 
 const App = () => {
   const [didRedirect, setDidRedirect] = useState<boolean>(false);
