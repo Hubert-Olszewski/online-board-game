@@ -1,5 +1,3 @@
-import { Typography } from "@mui/material";
-import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { GameView } from "./Views/GameView";
@@ -116,17 +114,16 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
     socket.emit("playerJoinGame", gameRoomData);
 
     return(
-        <Stack>
-            <Typography variant="h3" textAlign={'center'} color={'green'}>Welcome to the Online Board Game!</Typography>
-                {
-                    opponentDidJoinTheGame ? <GameView socket={socket} gameId={gameRoomData.gameId} userName={gameRoomData.userName} opponentUserName={opponentUserName}></GameView> 
-                    : 
-                        gameSessionDoesNotExist ? <NoConnectionView/>
+        <div>
+            {
+                opponentDidJoinTheGame ? <GameView socket={socket} gameId={gameRoomData.gameId} userName={gameRoomData.userName} opponentUserName={opponentUserName}></GameView> 
+                : 
+                    gameSessionDoesNotExist ? <NoConnectionView/>
+                    :
+                        isGameRoomFull ? <FullRoomView />
                         :
-                            isGameRoomFull ? <FullRoomView />
-                            :
-                            <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
-                }
-        </Stack>
+                        <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
+            }
+        </div>
     );
 }
