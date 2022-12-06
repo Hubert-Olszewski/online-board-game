@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 import { ChatView } from "./ChatView";
 import { FC } from "react";
-import { Stack } from "@mui/system";
+import { BoardView } from "./BoardView";
 
 interface IGameViewProps{
     socket: Socket;
@@ -13,8 +13,9 @@ interface IGameViewProps{
 export const GameView: FC<IGameViewProps> = ({socket, gameId, userName, opponentUserName}) => {
     
     return (
-        <Stack>
+        <div>
+            <BoardView />
             <ChatView socket={socket} gameId={gameId} userName={userName} opponentUserName={opponentUserName}></ChatView>
-        </Stack>
+        </div>
     );
 }
