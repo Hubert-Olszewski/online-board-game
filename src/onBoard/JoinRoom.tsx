@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FC } from "react";
 import { Socket } from "socket.io-client";
-import { LogScreen } from "../components/LogScreen";
+import { LogScreenView } from "./Views/LogScreenView";
 import { JoinGame } from "./JoinGame";
 
 interface ISocket{
@@ -31,6 +31,6 @@ export const JoinRoom:FC<ISocket> = ({socket}) => {
         user.didGetUserName ?
         <JoinGame socket={socket} userName={user.userName} isCreator={false}/>
         :
-        <LogScreen onClickBtn={joinGameRoom} onChangeInput={setInputValue} isDisabled={!(user.userName.length > 0)}/>
+        <LogScreenView onClickBtn={joinGameRoom} onChangeInput={setInputValue} isDisabled={!(user.userName.length > 0)}/>
     );
 }
