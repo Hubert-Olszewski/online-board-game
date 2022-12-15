@@ -1,8 +1,9 @@
 import { FC, useState } from "react";
 import { v4 as uuid } from 'uuid';
 import { useNavigate } from "react-router-dom";
-import { LogScreen, SendButton } from "../components/LogScreen";
 import { Socket } from "socket.io-client";
+import { PanelManagerView } from "./Views/PanelManagerView";
+import { LogScreenView } from "./Views/LogScreenView";
 
 interface ICreateNewGameProps{
     didRedirect: () => void;
@@ -18,40 +19,45 @@ interface INewGameStatus{
 export const CreateNewGame: FC<ICreateNewGameProps> = ({didRedirect, setUserName, socket}) => {
     const navigate = useNavigate();
     const [mySocketId, setMySocketId]= useState<string>('');
+    const [amountPlayers, setAmountPlayers] = useState<string>('');
     const [user, setUser] = useState({
         didGetUserName: false,
         userName: "",
-        gameId: ""
+        gameId: "",
+
     });
     
-    socket.on("createNewGame", (statusUpdate: INewGameStatus) => {
-      console.log("A new game has been created! Game id: " + statusUpdate.gameId + " ServerSocket id: " + statusUpdate.mySocketId + " ClientSocketID: " + socket.id);
+    socket.on("createdNewGame", (statusUpdate: INewGameStatus) => {
       console.log('CreateNewGame - client', statusUpdate);
       setMySocketId(statusUpdate.mySocketId);
     });
 
     const createNewGameRoom = () => {
-        const newGameRoomId = uuid();
-        setUser({...user, gameId: newGameRoomId, didGetUserName: true});
-
         setUserName(user.userName);
-        didRedirect();
-
-        socket.emit('createNewGame', newGameRoomId);
+        setUser({...user, didGetUserName: true});
     }
 
     const setInputValue = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setUser({...user, userName: event.target.value});
     }
 
-    const navigateToGameRoom = () => {
-        navigate('/game/' + user.gameId); //TODO: Do przemyślenia - przenieść nawigacje do socket.on('CreateNewGame') i zlikwidować przycisk StartGame
+    const navigateToGameRoom = (gameId: string) => {
+        navigate('/game/' + gameId);
+    }
+
+    const startGameOnClick = () => {
+        const newGameRoomId = uuid() + amountPlayers;
+        setUser({...user, gameId: newGameRoomId});
+        socket.emit('createNewGame', newGameRoomId);
+
+        didRedirect();
+        navigateToGameRoom(newGameRoomId);
     }
 
     return (
         user.didGetUserName ?        
-            <SendButton sx={{left: '47%', top:'51%'}} onClick={navigateToGameRoom}>Start Game</SendButton>
+            <PanelManagerView startGameOnClick={startGameOnClick} setAmountPlayers={setAmountPlayers} amountPlayers={amountPlayers} />
             :
-            <LogScreen onClickBtn={createNewGameRoom} onChangeInput={setInputValue} isDisabled={!(user.userName.length > 0)}/>
+            <LogScreenView onClickBtn={createNewGameRoom} onChangeInput={setInputValue} isDisabled={!(user.userName.length > 0)}/>
     );
 }

@@ -6,6 +6,7 @@ import { WaitingRoomView } from "./Views/WaitingRoomView";
 import { Socket } from "socket.io-client";
 import { FC } from "react";
 import { FullRoomView } from "./Views/FullRoomView";
+import { IUser } from '../App';
 
 
 interface IJoinGameProps{
@@ -36,9 +37,8 @@ interface IUserGameRoomData{
 export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
     // const color = useContext(ColorContext);
     const { gameid } = useParams();
-    const [opponentSocketId, setOpponentSocketId] = useState<string>('');
-    const [opponentUserName, setOpponentUserName] = useState<string>('');
-    const [opponentDidJoinTheGame, setDidOpponentJoinGame] = useState<boolean>(false);
+    const [opponentUsers, setOpponentUsers] = useState<IUser[]>([]);
+    const [currentUser, setCurrentUser] = useState<IUser>({} as IUser);
     const [gameSessionDoesNotExist, setGameSessionDoesntExist] = useState<boolean>(false);
     const [isGameRoomFull, setIsGameRoomFull] = useState<boolean>(false);
     const [gameRoomData, setGameRoomData] = useState<IGameRoomData>({
@@ -48,11 +48,26 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
     });
 
     useEffect(() => {
-        socket.on("playerJoinedRoom", (statusUpdate: IUserGameRoomData) => {
-            console.log("A new player has joined the room! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " comingSocket: " + statusUpdate.mySocketId + ' LocalSocket: ' + socket.id);
+        socket.on("playerJoinedRoom", ({userName, gameId, mySocketId, isCreator}: IUserGameRoomData) => {
+            // console.log("A new player has joined the room! Username: " + userName + ", Game id: " + gameId + " comingSocket: " + mySocketId + ' LocalSocket: ' + socket.id);
             // notifyInfo(`A new player, ${statusUpdate.userName} has joined the room!`);
-            if (socket.id !== statusUpdate.mySocketId) {
-                setOpponentSocketId(statusUpdate.mySocketId);
+            const newUser = {
+                gameId: gameId ? gameId : '',
+                userId: socket.id,
+                isCreator: isCreator,
+                isConnected: true,
+                didJoinTheGame: true,
+                didGetUserName: true,
+                userName: userName,
+                money: -1,
+            }
+            
+            if (socket.id !== mySocketId) {
+                const isOpponentUser = opponentUsers.find(({userId}) => userId === mySocketId);
+                !isOpponentUser && setOpponentUsers([...opponentUsers, newUser]);
+            }
+            else{
+                setCurrentUser(newUser);
             }
         });
 
@@ -60,11 +75,17 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
             console.log("START!");
             if (opponentUserName !== userName) {
                 console.log('OpponentName', opponentUserName);
-                setOpponentUserName(opponentUserName);
-                setDidOpponentJoinGame(true); 
+                const opponentUser = opponentUsers.find((opponent) => opponent.userName === opponentUserName),
+                newOpponnentUsers = opponentUsers.filter((opponent) => opponent.userName !== opponentUserName);
+
+                opponentUser && setOpponentUsers([...newOpponnentUsers, {
+                    ...opponentUser, 
+                    userName: opponentUserName, 
+                    didJoinTheGame: true
+                }]);
             } else {
-                // socket.emit('myUserName')
                 console.log('requestUsername', opponentUserName);
+                setCurrentUser({...currentUser, didJoinTheGame: true});
                 socket.emit('requestUsername', gameRoomData.gameId);
             }
         });
@@ -77,18 +98,38 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
             }
         });
     
-        socket.on('getOpponentUserName', (data: IOponentUserData) => {
+        socket.on('getOpponentUserName', ({userName, socketId, gameId}: IOponentUserData) => {
             // console.log('getOpponentUserNameBefore');
-            if (socket.id !== data.socketId) {
-                console.log('Oponent: ' + data.userName);
-                setOpponentUserName(data.userName);
-                setOpponentSocketId(data.socketId);
-                setDidOpponentJoinGame(true);
+            const newUser = {
+                gameId: gameId ? gameId : '',
+                userId: socketId,
+                isCreator: false,
+                isConnected: true,
+                didJoinTheGame: true,
+                didGetUserName: true,
+                userName: userName,
+                money: -1,
+            }
+
+            if (socket.id !== socketId) {
+                console.log('Oponent: ' + userName);
+                const opponentUser = opponentUsers.find(({userId}) => userId === socketId);
+                !opponentUser && setOpponentUsers([...opponentUsers, newUser]);
             }
         });
 
-        socket.on('onDisconnect', (data) => {
-            console.log('User has left: ', data);
+        socket.on('onDisconnect', ({reason, userId}) => {
+            console.log('User has left: ', userId, reason);
+            const opponentUser = opponentUsers.find(user => user.userId === userId);
+            if(currentUser.userId === userId){
+                setCurrentUser({...currentUser, isConnected: false});
+            }
+            else if(opponentUser && opponentUser.userId === userId ){
+                const opponentUsersWithOutOne = opponentUsers.filter((user) => user.userId !== userId);
+                opponentUsersWithOutOne.push({...opponentUser, isConnected: false});
+                setOpponentUsers(opponentUsersWithOutOne);
+            }
+            
         });
 
         socket.on('disconnect', (reason) => {
@@ -111,12 +152,24 @@ export const JoinGame: FC<IJoinGameProps> = ({socket, userName, isCreator}) => {
 
     }, []);
 
-    socket.emit("playerJoinGame", gameRoomData);
+    const opponent = opponentUsers.find(opponent => opponent.userId === socket.id);
+    if(currentUser && socket.id === currentUser.userId){
+        !currentUser.isConnected && socket.emit("playerJoinGame", gameRoomData);
+    }
+    else if(opponent && socket.id === opponent.userId){
+        !opponent.isConnected && socket.emit("playerJoinGame", gameRoomData);
+    }
+
+    useEffect(() => {
+        socket.emit("playerJoinGame", gameRoomData);
+    }, []);
+
 
     return(
         <div>
             {
-                opponentDidJoinTheGame ? <GameView socket={socket} gameId={gameRoomData.gameId} userName={gameRoomData.userName} opponentUserName={opponentUserName}></GameView> 
+                opponentUsers.length && opponentUsers.reduce((didAllPlayersJoinedTheGame, {didJoinTheGame}) => Boolean(+didAllPlayersJoinedTheGame * +didJoinTheGame), true) ? 
+                <GameView socket={socket} gameId={gameRoomData.gameId} userName={gameRoomData.userName} opponentUsers={opponentUsers} currentUser={currentUser} /> 
                 : 
                     gameSessionDoesNotExist ? <NoConnectionView/>
                     :
