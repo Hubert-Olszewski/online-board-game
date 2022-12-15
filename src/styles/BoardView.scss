@@ -12,7 +12,7 @@ $body-font: 'Oswald', sans-serif;
 // =================
 
 $black: #080808;
-$brown: #640303;
+$brown: #A52A2A;
 $board: #fafaf8;
 $dark-purple: #5e3577;
 $light-blue: #d2eaf5;
@@ -59,7 +59,7 @@ h1, h2, h3, h4, h5, h6 {
 .yellow      { background: $yellow; }
 .green       { background: $green; }
 .dark-blue   { background: $dark-blue; }
-
+.brown		 { background: $brown; }
 
 // =================
 // LAYOUT
@@ -99,7 +99,7 @@ h1, h2, h3, h4, h5, h6 {
 .title {
 	grid-column: 1 / 9;
 	grid-row: 4;
-	font-size: 90px;
+	font-size: 80px;
 	font-weight: 400;
 	letter-spacing: 12px;
 }
