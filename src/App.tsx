@@ -8,6 +8,17 @@ import { JoinGame } from './onBoard/JoinGame';
 import socket from './api/socket';
 import './styles/App.css';
 
+export interface IUser {
+  gameId: string;
+  userId: string;
+  isCreator: boolean;
+  isConnected: boolean;
+  didJoinTheGame: boolean;
+  didGetUserName: boolean;
+  userName: string;
+  money: number;
+}
+
 const App = () => {
   const [didRedirect, setDidRedirect] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>('');
