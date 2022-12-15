@@ -1,10 +1,18 @@
 import { Typography } from "@mui/material";
+import { FC } from "react";
+import { Socket } from "socket.io-client";
+import { ControlPanelView } from "../../Views/ControlPanelView";
 import { CenterDeck } from "./CenterDeck";
 
-export const CenterBoard = () => (
+interface ICenterBoardProps {
+    socket: Socket;
+}
+
+export const CenterBoard: FC<ICenterBoardProps> = ({socket}) => (
     <div className="center">
-        <CenterDeck className="community-chest-deck" label="Community Chest"/>
-        <Typography variant="h2" className="title">MONOPOLY</Typography>
-        <CenterDeck className="chance-deck" label="Chance"/>
+        <ControlPanelView socket={socket}/>
+        <CenterDeck className="community-chest-deck" label="Kasa studencka"/>
+        <Typography variant="h2" className="title">MONOPOLSL</Typography>
+        <CenterDeck className="chance-deck" label="Szansa studencka"/>
     </div>
 );
