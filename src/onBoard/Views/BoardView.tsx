@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import { CenterBoard } from "../BoardComponents/CenterBoard/CenterBoard";
 import { GenericField } from "../BoardComponents/GenericField";
-import { Fragment } from "react";
+import { FC, Fragment } from "react";
 import { PropertyField } from "../BoardComponents/PropertyField";
 import { ChanceField } from "../BoardComponents/ChanceField";
 import { StationField } from "../BoardComponents/CenterBoard/StationField";
@@ -9,7 +9,12 @@ import { TaxField } from "../BoardComponents/TaxField";
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
 import '../../styles/BoardView.scss';
+import { Socket } from "socket.io-client";
 
+
+interface IBoardViewProps {
+    socket: Socket;
+}
 
 export interface IClassNames{
     className: string;
@@ -97,7 +102,7 @@ const boardItems = [
             },
             {
                 fieldType: 'propertyField',
-                color: 'dark-purple',
+                color: 'brown',
                 name: 'Organizacja i Zarządzanie',
                 price: 'PRICE $50'
             },
@@ -109,7 +114,7 @@ const boardItems = [
             },
             {
                 fieldType: 'propertyField',
-                color: 'dark-purple',
+                color: 'brown',
                 name: 'Badania nad Edukacją i Komunikacją',
                 price: 'PRICE $50'
             },
@@ -261,7 +266,7 @@ const boardItems = [
             },
             {
                 fieldType: 'propertyField',
-                color: 'red',
+                color: 'yellow',
                 name: 'Geometria i Grafika Inżynierska',
                 price: 'PRICE $200'
             },
@@ -372,19 +377,19 @@ const boardItems = [
     },
 ]
 
-export const BoardView = () => {
+export const BoardView:FC<IBoardViewProps> = ({socket}) => {
     return(
         <div className="table">
             <div className="board">
-                <CenterBoard />
+                <CenterBoard socket={socket}/>
                     {
                         boardItems.map((item, idx) => {
-                            console.log(item, idx);
+                            // console.log(item, idx);
                             return <div key={idx} className={item.containerClassName}>
                                 {
                                     item.properties?.length &&
                                     item.properties.map((property, index) => {
-                                        console.log(property, index);
+                                        // console.log(property, index);
                                         return item.field(property.color, property.name, property.price, property.fieldType, property.name + index);
                                     })
                                 }
