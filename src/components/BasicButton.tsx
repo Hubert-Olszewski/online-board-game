@@ -28,3 +28,8 @@ export const BasicStyleButton = styled(Button)({
   }
   
 });
+
+export const StyledButton = styled(BasicStyleButton)({
+  textAlign: 'center',
+  display: 'flex'
+});
