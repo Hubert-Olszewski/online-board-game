@@ -11,25 +11,14 @@ interface ICreateNewGameProps{
     socket: Socket;
 }
 
-interface INewGameStatus{
-    gameId: string, 
-    mySocketId: string
-}
-
 export const CreateNewGame: FC<ICreateNewGameProps> = ({didRedirect, setUserName, socket}) => {
     const navigate = useNavigate();
-    const [mySocketId, setMySocketId]= useState<string>('');
     const [amountPlayers, setAmountPlayers] = useState<string>('');
     const [user, setUser] = useState({
         didGetUserName: false,
         userName: "",
         gameId: "",
 
-    });
-    
-    socket.on("createdNewGame", (statusUpdate: INewGameStatus) => {
-      console.log('CreateNewGame - client', statusUpdate);
-      setMySocketId(statusUpdate.mySocketId);
     });
 
     const createNewGameRoom = () => {

@@ -8,6 +8,10 @@ import { JoinGame } from './onBoard/JoinGame';
 import socket from './api/socket';
 import './styles/App.css';
 
+interface IPropsUser {
+  money: number;
+}
+
 export interface IUser {
   gameId: string;
   userId: string;
@@ -16,7 +20,7 @@ export interface IUser {
   didJoinTheGame: boolean;
   didGetUserName: boolean;
   userName: string;
-  money: number;
+  props: IPropsUser
 }
 
 const App = () => {
@@ -39,7 +43,7 @@ const App = () => {
           <Route path={routes.game} element=
           {
             didRedirect ?
-                <JoinGame socket={socket} userName={userName} isCreator={true}/>
+                <JoinGame coreSocket={socket} coreUserName={userName} coreIsCreator={true}/>
                 :
                 <JoinRoom socket={socket}/>
           }></Route>

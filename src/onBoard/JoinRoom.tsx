@@ -29,7 +29,7 @@ export const JoinRoom:FC<ISocket> = ({socket}) => {
     
     return (
         user.didGetUserName ?
-        <JoinGame socket={socket} userName={user.userName} isCreator={false}/>
+        <JoinGame coreSocket={socket} coreUserName={user.userName} coreIsCreator={false}/>
         :
         <LogScreenView onClickBtn={joinGameRoom} onChangeInput={setInputValue} isDisabled={!(user.userName.length > 0)}/>
     );
