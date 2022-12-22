@@ -10,53 +10,57 @@ import { IUser } from "../../App";
 interface IChatViewProps{
     socket: Socket;
     gameId: string | undefined;
-    userName: string;
-    opponentUsers: IUser[];
-    currentUser: IUser;
 }
 
 interface IMessageReceived{
     message: string;
-    user: string;
+    user: IUser;
 }
 
-export const ChatView: FC <IChatViewProps> = ({socket, gameId, userName, opponentUsers, currentUser}) => {
+export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
     const [room, setRoom] = useState(gameId);
-    const [user, setUser] = useState(userName);
+    const [currentUser, setCurrentUser] = useState<IUser | null>(null);
+    const [disconnectedUser, setDisconntectedUser] = useState<IUser | null>(null);
     const [message, setMessage] = useState('');
     const [messageStorage, setMessageStorage] = useState<string[]>([]);
 
     const sendMessage = () => {
         if(message !== ''){
-            socket.emit('sendMessage', {message, room, user});
+            socket.emit('sendMessage', {message, room, user: currentUser});
             setMessage('');
         }
     }
 
     useEffect(() => {
-        if(currentUser.userId === socket.id){
-            !currentUser.isConnected && setMessageStorage(arr => [...arr, `${currentUser.userName} has left the room!`]);
-        }
-        else{
-            console.log('Other user has left the room');
-        }
-    }, [currentUser]);
-
-    useEffect(() => {
-        opponentUsers.map(opponent => setMessageStorage(arr => arr.find(message => message === `${opponent.userName} has joined the room!`) ? 
-            [...arr, `${opponent.userName} has joined the room!`] : arr)
-        );
-    }, [opponentUsers]);
-    
-    useEffect(() => {
-        setMessageStorage(arr => [...arr, `${currentUser.userName} has joined the room!`]);
-    }, [currentUser])
-
-    useEffect(() => {
         socket.on('receiveMessage', (response: IMessageReceived) => {
-            setMessageStorage(arr => [...arr, `${response.user}: ${response.message}`]);
+            setMessageStorage(arr => [...arr, `${response.user.userName}: ${response.message}`]);
             console.log(response);
         });
+
+        socket.on("playerJoinedRoom", (newUser: IUser) => {
+            console.log('playerJoinedRoom', socket.id, newUser.userId, currentUser);
+
+            if(disconnectedUser && newUser.userName === disconnectedUser.userName){
+                newUser.props = disconnectedUser.props;
+            }
+
+            setCurrentUser(newUser);
+            setMessageStorage(arr => [...arr, `${newUser.userName} (me) has joined the room!`]);
+        });
+
+        socket.on('playerReconnected', (newUser: IUser) => {
+            console.log('playerReconnected', socket.id, newUser.userId, currentUser);
+
+            setMessageStorage(arr => [...arr, `${newUser.userName} has joined the room!`]);
+        });
+
+        socket.on('onDisconnect', (disconectedUser: IUser) => {
+            console.log('onDisconnect', currentUser, disconectedUser);
+
+            setDisconntectedUser(disconectedUser);
+            setMessageStorage(arr => [...arr, `${disconectedUser.userName} has left the room!`]);
+        });
+
     }, []);
 
     const setInputValue = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -74,7 +78,7 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId, userName, opponen
                     messageStorage.map((item, index) => 
                     <Typography key={index}>
                         {item}
-                    </Typography>) 
+                    </Typography>)
                 }
             </Box>
             <Stack>
