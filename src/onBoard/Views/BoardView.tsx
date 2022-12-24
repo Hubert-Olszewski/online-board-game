@@ -379,26 +379,24 @@ const boardItems = [
     },
 ]
 
-export const BoardView:FC<IBoardViewProps> = ({socket}) => {
-    return(
-        <div className="table">
-            <div className="board">
-                <CenterBoard socket={socket}/>
-                    {
-                        boardItems.map((item, idx) => {
-                            // console.log(item, idx);
-                            return <div key={idx} className={item.containerClassName}>
-                                {
-                                    item.properties?.length &&
-                                    item.properties.map((property, index) => {
-                                        // console.log(property, index);
-                                        return item.field(property.color, property.name, property.price, property.fieldType, property.name + index);
-                                    })
-                                }
-                            </div>
-                        })
-                    }
-            </div>
+export const BoardView:FC<IBoardViewProps> = ({socket}) => (
+    <div className="table">
+        <div className="board">
+            <CenterBoard socket={socket}/>
+                {
+                    boardItems.map((item, idx) => {
+                        // console.log(item, idx);
+                        return <div key={idx} className={item.containerClassName}>
+                            {
+                                item.properties?.length &&
+                                item.properties.map((property, index) => {
+                                    // console.log(property, index);
+                                    return item.field(property.color, property.name, property.price, property.fieldType, property.name + index);
+                                })
+                            }
+                        </div>
+                    })
+                }
         </div>
-    );
-}
+    </div>
+);

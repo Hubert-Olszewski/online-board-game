@@ -23,7 +23,6 @@ const { general } = textToDisplayPL;
 export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
     const [room, setRoom] = useState(gameId);
     const [currentUser, setCurrentUser] = useState<IUser | null>(null);
-    const [disconnectedUser, setDisconntectedUser] = useState<IUser | null>(null);
     const [message, setMessage] = useState('');
     const [messageStorage, setMessageStorage] = useState<string[]>([]);
 
@@ -35,17 +34,13 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
     }
 
     useEffect(() => {
-        socket.on('receiveMessage', (response: IMessageReceived) => {
-            setMessageStorage(arr => [...arr, `${response.user.userName}: ${response.message}`]);
-            console.log(response);
+        socket.on('receiveMessage', ({user, message}: IMessageReceived) => {
+            setMessageStorage(arr => [...arr, `${user.userName}: ${message}`]);
+            console.log(user, message);
         });
 
         socket.on("playerJoinedRoom", (newUser: IUser) => {
             console.log('playerJoinedRoom', socket.id, newUser.userId, currentUser);
-
-            if(disconnectedUser && newUser.userName === disconnectedUser.userName){
-                newUser.props = disconnectedUser.props;
-            }
 
             setCurrentUser(newUser);
             setMessageStorage(arr => [...arr, `${newUser.userName} (me) has joined the room!`]);
@@ -60,7 +55,6 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
         socket.on('onDisconnect', (disconectedUser: IUser) => {
             console.log('onDisconnect', currentUser, disconectedUser);
 
-            setDisconntectedUser(disconectedUser);
             setMessageStorage(arr => [...arr, `${disconectedUser.userName} has left the room!`]);
         });
 
