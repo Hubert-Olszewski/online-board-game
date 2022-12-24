@@ -1,0 +1,36 @@
+{
+    "general": {
+        "startGame": "Start Game",
+        "submit": "Submit",
+        "send": "Send", 
+        "start": "Start",
+        "yourUsername": "Your Username"
+    },
+    "fullRoom": {
+        "fullRoomMessg": "Unfortunately this room is full :(",
+        "waitOrLeave": "Wait for someone to leave the room and try again or try to join another one"
+    },
+    "panelManager": {
+        "selectPlayers": "Select number of players",
+        "players": "players"
+    },
+    "noConnection": {
+        "noConnection": "No connection :/",
+        "tryAgain": "Try again..."
+    },
+    "waitingRoom": {
+        "hello": "Hey",
+        "copyAndPasteUrl": ", copy and paste the URL below to send to your friends:",
+        "waitingForOtherOpponents": "Waiting for other opponents to join the game..."
+    },
+    "boardView": {
+        "startFieldInstruction": "Zgarnij 200pln",
+        "just": "Just",
+        "visiting": "Visiting",
+        "jail": "Jail",
+        "parking": "Parking",
+        "OSIR": "OSIR",
+        "goToJail": ["Go", "To", "Jail"],
+        "stationFieldPrice": "200pln"
+    }
+}
