@@ -6,6 +6,10 @@
         "start": "Start",
         "yourUsername": "Your Username"
     },
+    "UserAlreadyExists": {
+        "userExists": "This user already exists",
+        "tryAgain": "Refresh browser and try type another name..."
+    },
     "fullRoom": {
         "fullRoomMessg": "Unfortunately this room is full :(",
         "waitOrLeave": "Wait for someone to leave the room and try again or try to join another one"

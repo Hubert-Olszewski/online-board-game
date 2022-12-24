@@ -6,6 +6,10 @@
         "start": "Start",
         "yourUsername": "Nazwa użytkownika"
     },
+    "UserAlreadyExists": {
+        "userExists": "Podany użytkownik już istnieje",
+        "tryAgain": "Odśwież przeglądarke i spróbuj podać inną nazwę..."
+    },
     "fullRoom": {
         "fullRoomMessg": "Niestety ten pokój jest pełen :(",
         "waitOrLeave": "Poczekaj aż ktoś opuści pokój i spróbuj ponownie lub spróbuj dołączyć do innego pokoju"
