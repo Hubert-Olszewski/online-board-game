@@ -6,6 +6,7 @@ import { TextareaAutosize, Typography } from "@mui/material";
 import { keyboardKey } from "@testing-library/user-event";
 import { StyledButton } from "../../components/BasicButton";
 import { IUser } from "../../App";
+import textToDisplayPL from '../../assets/textToDisplay/pl-PL.json';
 
 interface IChatViewProps{
     socket: Socket;
@@ -16,6 +17,8 @@ interface IMessageReceived{
     message: string;
     user: IUser;
 }
+
+const { general } = textToDisplayPL;
 
 export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
     const [room, setRoom] = useState(gameId);
@@ -83,7 +86,7 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
             </Box>
             <Stack>
                 <TextareaAutosize aria-label="empty textarea" value={message} onChange={setInputValue} onKeyDown={handleKeyDown} placeholder={'Type your message here...'} style={{ fontSize: '18px', resize: 'none', maxHeight: '270px', overflow: 'auto' }}/>
-                <StyledButton onClick={sendMessage}>Send</StyledButton>
+                <StyledButton onClick={sendMessage}>{general.send}</StyledButton>
             </Stack>
         </Stack>
     );
