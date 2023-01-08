@@ -18,14 +18,15 @@ export interface IUser {
   isCreator: boolean;
   isConnected: boolean;
   didJoinTheGame: boolean;
-  didGetUserName: boolean;
   userName: string;
-  props: IPropsUser
+  props: IPropsUser,
+  colorPawn: string;
 }
 
 const App = () => {
   const [didRedirect, setDidRedirect] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>('');
+  const [userColorPawn, setUserColorPawn] = useState<string>('');
 
   const playerDidRedirect = useCallback(() => {
     setDidRedirect(true);
@@ -39,11 +40,11 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path={routes.root} element={<Navigate to={routes.createNewGame}/>} />
-          <Route path={routes.createNewGame} element={<OnBoard socket={socket} setUserName={setUserName}/>} />
+          <Route path={routes.createNewGame} element={<OnBoard socket={socket} setUserName={setUserName} setUserColorPawn={setUserColorPawn} />} />
           <Route path={routes.game} element=
           {
             didRedirect ?
-                <JoinGame coreSocket={socket} coreUserName={userName} coreIsCreator={true}/>
+                <JoinGame coreSocket={socket} coreUserName={userName} userColorPawn={userColorPawn} coreIsCreator={true}/>
                 :
                 <JoinRoom socket={socket}/>
           }></Route>

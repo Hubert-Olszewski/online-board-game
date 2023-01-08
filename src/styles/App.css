@@ -67,11 +67,56 @@ button.roll-dice {
 
 }
 
-.start-game-button {
-    
-}
-
 .panel-manager {
     height: calc(100% - 40px);
+}
 
+/* PAWNS */
+.pawn-container {
+    display: inline-flex;
+    flex-direction: column;
+    place-self: center;
+    height: 100px;
+    width: 100px;
+}
+
+.select-pawn-view {
+    top: 35%;
+    position: relative;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.pawn, .player-pawn {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.pawn-logo {
+    height: 70px;
+    width: auto;
+}
+  
+.pawn:hover {
+    transform: scale(1.5);
+}
+
+.smoke {
+    position: absolute;
+    transform: translate(-65px, -75px);
+    animation: smoke-dissolve 1.5s ease forwards;
+}
+  
+@keyframes smoke-dissolve {
+    from {
+        opacity: 1;
+    }
+    10% {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
