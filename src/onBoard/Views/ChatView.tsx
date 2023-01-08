@@ -18,7 +18,7 @@ interface IMessageReceived{
     user: IUser;
 }
 
-const { general } = textToDisplayPL;
+const { general, chatView } = textToDisplayPL;
 
 export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
     const [room, setRoom] = useState(gameId);
@@ -43,19 +43,19 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
             console.log('playerJoinedRoom', socket.id, newUser.userId, currentUser);
 
             setCurrentUser(newUser);
-            setMessageStorage(arr => [...arr, `${newUser.userName} (me) has joined the room!`]);
+            setMessageStorage(arr => [...arr, `${newUser.userName} ${newUser.colorPawn} ${chatView.IJoinedTheRoom}`]);
         });
 
         socket.on('playerReconnected', (newUser: IUser) => {
             console.log('playerReconnected', socket.id, newUser.userId, currentUser);
 
-            setMessageStorage(arr => [...arr, `${newUser.userName} has joined the room!`]);
+            setMessageStorage(arr => [...arr, `${newUser.userName} ${newUser.colorPawn} ${chatView.HeHasJoinedTheRoom}`]);
         });
 
         socket.on('onDisconnect', (disconectedUser: IUser) => {
             console.log('onDisconnect', currentUser, disconectedUser);
 
-            setMessageStorage(arr => [...arr, `${disconectedUser.userName} has left the room!`]);
+            setMessageStorage(arr => [...arr, `${disconectedUser.userName} ${chatView.HeHasLeftTheRoom}`]);
         });
 
     }, []);
@@ -79,7 +79,7 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
                 }
             </Box>
             <Stack>
-                <TextareaAutosize aria-label="empty textarea" value={message} onChange={setInputValue} onKeyDown={handleKeyDown} placeholder={'Type your message here...'} style={{ fontSize: '18px', resize: 'none', maxHeight: '270px', overflow: 'auto' }}/>
+                <TextareaAutosize aria-label="empty textarea" value={message} onChange={setInputValue} onKeyDown={handleKeyDown} placeholder={chatView.typeYourMessage} style={{ fontSize: '18px', resize: 'none', maxHeight: '270px', overflow: 'auto' }}/>
                 <StyledButton onClick={sendMessage}>{general.send}</StyledButton>
             </Stack>
         </Stack>
