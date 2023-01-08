@@ -36,5 +36,14 @@
         "OSIR": "OSIR",
         "goToJail": ["Idziesz", "Do", "Więzienia"],
         "stationFieldPrice": "200pln"
+    },
+    "SelectPawnView": {
+        "select": "Wybierz pionka"
+    },
+    "chatView": {
+        "IJoinedTheRoom": "(ja) dołączył do pokoju!",
+        "HeHasJoinedTheRoom": "dołączył do pokoju!",
+        "HeHasLeftTheRoom": "opuścił pokój!",
+        "typeYourMessage": "Wpisz tutaj swoją wiadomość..."
     }
 }
