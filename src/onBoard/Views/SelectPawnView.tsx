@@ -14,6 +14,23 @@ interface ISelectPawnViewProps {
   playerName: string;
 }
 
+export const getPawnImage = (imgName: string) => {
+  switch (imgName) {
+    case 'yellowPawn':
+      return yellowPawn;
+    case 'redPawn':
+      return redPawn;
+    case 'greenPawn':
+      return greenPawn;
+    case 'bluePawn':
+      return bluePawn;
+    case 'smoke':
+      return smoke;
+    default:
+      return null;
+  }
+}
+
 export const SelectPawnView: FC<ISelectPawnViewProps> = ({setColor, playerName, socket}) => {
   const [pawns, setPawns] = useState<string[]>([]),
 
@@ -23,23 +40,6 @@ export const SelectPawnView: FC<ISelectPawnViewProps> = ({setColor, playerName, 
     }
     else{
       console.log('Smoked');
-    }
-  },
-
-  getImage = (imgName: string) => {
-    switch (imgName) {
-      case 'yellowPawn':
-        return yellowPawn;
-      case 'redPawn':
-        return redPawn;
-      case 'greenPawn':
-        return greenPawn;
-      case 'bluePawn':
-        return bluePawn;
-      case 'smoke':
-        return smoke;
-      default:
-        return null;
     }
   }
 
@@ -59,7 +59,7 @@ export const SelectPawnView: FC<ISelectPawnViewProps> = ({setColor, playerName, 
             <img
               className="pawn"
               alt={pawn}
-              src={getImage(pawn)} />
+              src={getPawnImage(pawn)} />
           </div>
         ))
       }
