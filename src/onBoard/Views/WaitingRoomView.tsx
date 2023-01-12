@@ -14,7 +14,7 @@ const { waitingRoom } = textToDisplayPL;
 export const WaitingRoomView: FC<IUserName> = ({gameId, userName}) => (
     <Stack>
         <Typography variant="h2" textAlign={'center'} top={'5vh'} position={'relative'}>{waitingRoom.hello} {' '}
-            <Box fontWeight='fontWeightMedium' display='inline'>
+            <Box fontWeight='fontWeightMedium' display='inline' color={'red'}>
                 {userName} 
             </Box>{waitingRoom.copyAndPasteUrl}
         </Typography>

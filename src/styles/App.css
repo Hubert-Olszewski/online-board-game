@@ -98,6 +98,28 @@ button.roll-dice {
     height: 70px;
     width: auto;
 }
+
+.chatPawn{
+    height: 40px;
+}
+
+.disconected-user-message{
+    color: red;
+}
+
+.connected-user-message{
+    color: lightgreen;
+}
+
+.reconnected-user-message{
+    color: lightblue;
+}
+
+.message{
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
   
 .pawn:hover {
     transform: scale(1.5);
