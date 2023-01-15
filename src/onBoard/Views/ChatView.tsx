@@ -47,8 +47,6 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
         });
 
         socket.on("playerJoinedRoom", (newUser: IUser) => {
-            console.log('playerJoinedRoom', socket.id, newUser.userId, currentUser);
-
             setCurrentUser(newUser);
 
             setMessageStorage(arr => [...arr,
