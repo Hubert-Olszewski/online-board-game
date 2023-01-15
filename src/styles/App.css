@@ -23,10 +23,11 @@ div.Mui-disabled{
 
 button.roll-dice {
     width: auto;
+    margin: 1%;
 }
 
 .left-panel{
-    width: 35%;
+    width: 40%;
     height: 85%;
     float: left;
     margin: 0;
@@ -34,14 +35,14 @@ button.roll-dice {
 }
 
 .right-panel {
-    width: calc(65% - 20px);
+    width: calc(65% - 40px);
     height: calc(85% - 20px);
     float: right;
     margin: 10px;
 }
 
 .current-player {
-    border: 1px solid green;
+    /* border: 1px solid green; */
     width: 90%;
     height: 25%;
     margin: 5%;
@@ -49,7 +50,7 @@ button.roll-dice {
 }
 
 .drawn-number {
-    border: 1px solid gold;
+    /* border: 1px solid gold; */
     width: 90%;
     height: 50%;
     margin: 5%;
@@ -101,6 +102,13 @@ button.roll-dice {
 
 .chatPawn{
     height: 40px;
+}
+
+.corner-field-pawn{
+    height: 30px;
+    position: relative;
+    float: right;
+    bottom: 25%;
 }
 
 .disconected-user-message{
