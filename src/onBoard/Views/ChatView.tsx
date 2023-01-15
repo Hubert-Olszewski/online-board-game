@@ -6,6 +6,9 @@ import { TextareaAutosize, Typography } from "@mui/material";
 import { keyboardKey } from "@testing-library/user-event";
 import { StyledButton } from "../../components/BasicButton";
 import { IUser } from "../../App";
+import textToDisplayPL from '../../assets/textToDisplay/pl-PL.json';
+import { getPawnImage } from "./SelectPawnView";
+import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 
 interface IChatViewProps{
     socket: Socket;
@@ -17,12 +20,13 @@ interface IMessageReceived{
     user: IUser;
 }
 
+const { general, chatView } = textToDisplayPL;
+
 export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
     const [room, setRoom] = useState(gameId);
     const [currentUser, setCurrentUser] = useState<IUser | null>(null);
-    const [disconnectedUser, setDisconntectedUser] = useState<IUser | null>(null);
     const [message, setMessage] = useState('');
-    const [messageStorage, setMessageStorage] = useState<string[]>([]);
+    const [messageStorage, setMessageStorage] = useState<ReactJSXElement[]>([]);
 
     const sendMessage = () => {
         if(message !== ''){
@@ -32,33 +36,51 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
     }
 
     useEffect(() => {
-        socket.on('receiveMessage', (response: IMessageReceived) => {
-            setMessageStorage(arr => [...arr, `${response.user.userName}: ${response.message}`]);
-            console.log(response);
+        socket.on('receiveMessage', ({user, message}: IMessageReceived) => {
+            setMessageStorage(arr => [...arr, 
+                <>
+                    <img className="chatPawn" alt={user.colorPawn} src={getPawnImage(user.colorPawn)} />
+                    <span>{`${user.userName}: ${message}`}</span>
+                </>
+            ]);
+            console.log(user, message);
         });
 
         socket.on("playerJoinedRoom", (newUser: IUser) => {
-            console.log('playerJoinedRoom', socket.id, newUser.userId, currentUser);
-
-            if(disconnectedUser && newUser.userName === disconnectedUser.userName){
-                newUser.props = disconnectedUser.props;
-            }
-
             setCurrentUser(newUser);
-            setMessageStorage(arr => [...arr, `${newUser.userName} (me) has joined the room!`]);
+
+            setMessageStorage(arr => [...arr,
+                <>
+                    <img className="chatPawn" alt={newUser.colorPawn} src={getPawnImage(newUser.colorPawn)} />
+                    <span /*className="connected-user-message"*/>
+                        {`${newUser.userName} ${chatView.IJoinedTheRoom}`}
+                    </span>
+                </>
+            ]);
         });
 
         socket.on('playerReconnected', (newUser: IUser) => {
             console.log('playerReconnected', socket.id, newUser.userId, currentUser);
 
-            setMessageStorage(arr => [...arr, `${newUser.userName} has joined the room!`]);
+            setMessageStorage(arr => [...arr, 
+                <>
+                    <img className="chatPawn" alt={newUser.colorPawn} src={getPawnImage(newUser.colorPawn)} />
+                    <span /*className="reconnected-user-message"*/>
+                        {`${newUser.userName} ${chatView.HeHasJoinedTheRoom}`}
+                    </span>
+                </>
+            ]);
         });
 
         socket.on('onDisconnect', (disconectedUser: IUser) => {
             console.log('onDisconnect', currentUser, disconectedUser);
 
-            setDisconntectedUser(disconectedUser);
-            setMessageStorage(arr => [...arr, `${disconectedUser.userName} has left the room!`]);
+            setMessageStorage(arr => [...arr, 
+                <>
+                    <img className="chatPawn" alt={disconectedUser.colorPawn} src={getPawnImage(disconectedUser.colorPawn)} />
+                    <span className="disconected-user-message">{`${disconectedUser.userName} ${chatView.HeHasLeftTheRoom}`}</span>
+                </>
+            ]);
         });
 
     }, []);
@@ -76,14 +98,14 @@ export const ChatView: FC <IChatViewProps> = ({socket, gameId}) => {
             <Box aria-label="empty textarea" style={{border:'1px solid black', overflow:'auto', height: '80vh', fontSize: '18px', backgroundColor: 'white' }}>
                 { 
                     messageStorage.map((item, index) => 
-                    <Typography key={index}>
+                    <Typography key={index} className="message">
                         {item}
                     </Typography>)
                 }
             </Box>
             <Stack>
-                <TextareaAutosize aria-label="empty textarea" value={message} onChange={setInputValue} onKeyDown={handleKeyDown} placeholder={'Type your message here...'} style={{ fontSize: '18px', resize: 'none', maxHeight: '270px', overflow: 'auto' }}/>
-                <StyledButton onClick={sendMessage}>Send</StyledButton>
+                <TextareaAutosize aria-label="empty textarea" value={message} onChange={setInputValue} onKeyDown={handleKeyDown} placeholder={chatView.typeYourMessage} style={{ fontSize: '18px', resize: 'none', maxHeight: '270px', overflow: 'auto' }}/>
+                <StyledButton onClick={sendMessage}>{general.send}</StyledButton>
             </Stack>
         </Stack>
     );

@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 
 export const BasicStyleButton = styled(Button)({
   height: '40px',
-  width: '120px',
+  width: '140px',
   gap: '4px',
   boxShadow: 'none',
   textTransform: 'none',

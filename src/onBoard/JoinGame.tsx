@@ -7,30 +7,33 @@ import { Socket } from "socket.io-client";
 import { FC } from "react";
 import { FullRoomView } from "./Views/FullRoomView";
 import { IUser } from '../App';
+import { UserAlreadyExistsView } from "./Views/UserAlreadyExistsView";
 
 interface IJoinGameProps{
     coreSocket: Socket;
     coreUserName: string;
+    userColorPawn: string;
     coreIsCreator: boolean;
 }
 
-export const JoinGame: FC<IJoinGameProps> = ({coreSocket, coreUserName, coreIsCreator}) => {
+export const JoinGame: FC<IJoinGameProps> = ({coreSocket, coreUserName, userColorPawn, coreIsCreator}) => {
     // const color = useContext(ColorContext);
     const { gameid } = useParams();
     const [isRoomReady, setIsRoomReady] = useState<boolean>(false);
     const [gameSessionDoesNotExist, setGameSessionDoesntExist] = useState<boolean>(false);
     const [isGameRoomFull, setIsGameRoomFull] = useState<boolean>(false);
+    const [isUserAlreadyExists, setIsUserAlreadyExists] = useState<boolean>(false);
     const [gameRoomData, setGameRoomData] = useState<IUser>({
         gameId : gameid ? gameid : '',
         userName : coreUserName,
         isCreator: coreIsCreator,
         userId: coreSocket.id,
-        didGetUserName: true,
         didJoinTheGame: false,
         isConnected: false,
         props: {
-            money: -1
-        }
+            money: -1,
+        },
+        colorPawn: userColorPawn
     });
 
     useEffect(() => {
@@ -56,6 +59,9 @@ export const JoinGame: FC<IJoinGameProps> = ({coreSocket, coreUserName, coreIsCr
                 case 'fullRoom':
                     setIsGameRoomFull(true);
                     break;
+                case 'userAlreadyExists':
+                    setIsUserAlreadyExists(true);
+                    break;
                 default:
                     break;
             }
@@ -65,8 +71,8 @@ export const JoinGame: FC<IJoinGameProps> = ({coreSocket, coreUserName, coreIsCr
 
     useEffect(() => {
         coreSocket.emit("playerJoinGame", gameRoomData);
+        coreSocket.emit('updatePawns', userColorPawn);
     }, []);
-
 
     return(
         <div>
@@ -78,7 +84,9 @@ export const JoinGame: FC<IJoinGameProps> = ({coreSocket, coreUserName, coreIsCr
                     :
                         isGameRoomFull ? <FullRoomView />
                         :
-                        <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
+                            isUserAlreadyExists ? <UserAlreadyExistsView />
+                            : 
+                            <WaitingRoomView gameId={gameRoomData.gameId} userName={gameRoomData.userName}/>
             }
         </div>
     );

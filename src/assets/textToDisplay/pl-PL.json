@@ -1,0 +1,54 @@
+{
+    "general": {
+        "startGame": "Rozpocznij gre",
+        "submit": "Zatwierdź",
+        "send": "Wyślij", 
+        "start": "Start",
+        "yourUsername": "Nazwa użytkownika"
+    },
+    "UserAlreadyExists": {
+        "userExists": "Podany użytkownik już istnieje",
+        "tryAgain": "Odśwież przeglądarke i spróbuj podać inną nazwę..."
+    },
+    "fullRoom": {
+        "fullRoomMessg": "Niestety ten pokój jest pełen :(",
+        "waitOrLeave": "Poczekaj aż ktoś opuści pokój i spróbuj ponownie lub spróbuj dołączyć do innego pokoju"
+    },
+    "panelManager": {
+        "selectPlayers": "Wybierz liczbe graczy",
+        "players": "graczy"
+    },
+    "noConnection": {
+        "noConnection": "Brak połączenia :/",
+        "tryAgain": "Spróbuj ponownie..."
+    },
+    "waitingRoom": {
+        "hello": "Witaj",
+        "copyAndPasteUrl": ", skopiuj poniższy adres URL i wyślij znajomemu, z którym chcesz zagrać:",
+        "waitingForOtherOpponents": "Oczekiwanie na pozostałych graczy..."
+    },
+    "boardView": {
+        "startFieldInstruction": "Zgarnij 200pln",
+        "just": "Odwie-",
+        "visiting": "dziny",
+        "jail": "ARESZT",
+        "parking": "Parking",
+        "OSIR": "OSIR",
+        "goToJail": ["Idziesz", "Do", "Więzienia"],
+        "stationFieldPrice": "200pln"
+    },
+    "SelectPawnView": {
+        "select": "Wybierz pionka"
+    },
+    "chatView": {
+        "IJoinedTheRoom": "(ja) dołączył do pokoju!",
+        "HeHasJoinedTheRoom": "dołączył do pokoju!",
+        "HeHasLeftTheRoom": "opuścił pokój!",
+        "typeYourMessage": "Wpisz tutaj swoją wiadomość..."
+    },
+    "controlPanelView": {
+        "numberDrawn": "Wylosowana liczba",
+        "drawNumber": "Losuj liczbę",
+        "money": "Dostępne środki"
+    }
+}

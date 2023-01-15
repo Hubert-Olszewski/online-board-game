@@ -8,12 +8,9 @@ interface IGameViewProps{
     gameId: string | undefined;
 }
 
-export const GameView: FC<IGameViewProps> = ({socket, gameId}) => {
-    
-    return (
-        <div>
-            <BoardView socket={socket}/>
-            <ChatView socket={socket} gameId={gameId} />
-        </div>
-    );
-}
+export const GameView: FC<IGameViewProps> = ({socket, gameId}) => (
+    <div>
+        <BoardView socket={socket}/>
+        <ChatView socket={socket} gameId={gameId} />
+    </div>
+);

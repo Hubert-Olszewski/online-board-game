@@ -23,10 +23,11 @@ div.Mui-disabled{
 
 button.roll-dice {
     width: auto;
+    margin: 1%;
 }
 
 .left-panel{
-    width: 35%;
+    width: 40%;
     height: 85%;
     float: left;
     margin: 0;
@@ -34,14 +35,14 @@ button.roll-dice {
 }
 
 .right-panel {
-    width: calc(65% - 20px);
+    width: calc(65% - 40px);
     height: calc(85% - 20px);
     float: right;
     margin: 10px;
 }
 
 .current-player {
-    border: 1px solid green;
+    /* border: 1px solid green; */
     width: 90%;
     height: 25%;
     margin: 5%;
@@ -49,7 +50,7 @@ button.roll-dice {
 }
 
 .drawn-number {
-    border: 1px solid gold;
+    /* border: 1px solid gold; */
     width: 90%;
     height: 50%;
     margin: 5%;
@@ -67,11 +68,85 @@ button.roll-dice {
 
 }
 
-.start-game-button {
-    
-}
-
 .panel-manager {
     height: calc(100% - 40px);
+}
 
+/* PAWNS */
+.pawn-container {
+    display: inline-flex;
+    flex-direction: column;
+    place-self: center;
+    height: 100px;
+    width: 100px;
+}
+
+.select-pawn-view {
+    top: 35%;
+    position: relative;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.pawn, .player-pawn {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.pawn-logo {
+    height: 70px;
+    width: auto;
+}
+
+.chatPawn{
+    height: 40px;
+}
+
+.corner-field-pawn{
+    height: 30px;
+    position: relative;
+    float: right;
+    bottom: 25%;
+}
+
+.disconected-user-message{
+    color: red;
+}
+
+.connected-user-message{
+    color: lightgreen;
+}
+
+.reconnected-user-message{
+    color: lightblue;
+}
+
+.message{
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+  
+.pawn:hover {
+    transform: scale(1.5);
+}
+
+.smoke {
+    position: absolute;
+    transform: translate(-65px, -75px);
+    animation: smoke-dissolve 1.5s ease forwards;
+}
+  
+@keyframes smoke-dissolve {
+    from {
+        opacity: 1;
+    }
+    10% {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

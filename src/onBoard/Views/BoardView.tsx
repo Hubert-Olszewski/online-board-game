@@ -1,16 +1,18 @@
+import { Socket } from "socket.io-client";
 import { Stack } from "@mui/material";
 import { CenterBoard } from "../BoardComponents/CenterBoard/CenterBoard";
 import { GenericField } from "../BoardComponents/GenericField";
-import { FC, Fragment } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { PropertyField } from "../BoardComponents/PropertyField";
 import { ChanceField } from "../BoardComponents/ChanceField";
-import { StationField } from "../BoardComponents/CenterBoard/StationField";
+import { StationField } from "../BoardComponents/StationField";
 import { TaxField } from "../BoardComponents/TaxField";
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
 import '../../styles/BoardView.scss';
-import { Socket } from "socket.io-client";
-
+import textToDisplayPL from '../../assets/textToDisplay/pl-PL.json';
+import { IUser } from '../../App';
+import { getPawnImage } from "./SelectPawnView";
 
 interface IBoardViewProps {
     socket: Socket;
@@ -25,6 +27,8 @@ export interface IClassNames{
 export interface IKey{
     key: string;
 }
+
+const { boardView, general } = textToDisplayPL;
 
 const getField = (color: string, name: string, price:string, fieldType: string, key: string) => {
     switch (fieldType) {
@@ -50,15 +54,15 @@ const boardItems = [
                 price: '',
             },
         ],
-        field: (color: string, name: string, price: string, fieldType: string, key: string) =>
+        field: (color: string, name: string, price: string, fieldType: string, key: string, pawns: string[]) =>
             <Fragment key={key}>
                 <GenericField elements={
                     <Fragment>
-                        <Stack className="instructions">Zgarnij 200$</Stack>
-                        <Stack className="go-word">Start</Stack>
+                        <Stack className="instructions">{boardView.startFieldInstruction}</Stack>
+                        <Stack className="go-word">{general.start}</Stack>
                     </Fragment>
                 }/>
-                <Stack className="arrow fa fa-long-arrow-left"></Stack>
+                {pawns.map(it => <img key={it} className="corner-field-pawn" alt={it} src={getPawnImage(it)} />)}
             </Fragment>
     },
     {
@@ -68,13 +72,13 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'light-blue',
                 name: 'Wydział Inżynierii Materia-\nłowej',
-                price: 'PRICE $120',
+                price: '120pln',
             },
             {
                 fieldType: 'propertyField',
                 color: 'light-blue',
                 name: 'Wydział Górnictwa',
-                price: 'PRICE $100'
+                price: '100pln'
             },
             {
                 fieldType: 'chanceField',
@@ -86,7 +90,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'light-blue',
                 name: 'Wydział Elektryczny',
-                price: 'PRICE $100'
+                price: '100pln'
             },
             {
                 fieldType: 'stationField',
@@ -98,13 +102,13 @@ const boardItems = [
                 fieldType: 'taxField',
                 color: '',
                 name: 'Opłata warunku',
-                price: 'Pay $200'
+                price: '200pln'
             },
             {
                 fieldType: 'propertyField',
                 color: 'brown',
                 name: 'Organizacja i Zarządzanie',
-                price: 'PRICE $50'
+                price: '50pln'
             },
             {
                 fieldType: 'chestField',
@@ -116,7 +120,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'brown',
                 name: 'Badania nad Edukacją i Komunikacją',
-                price: 'PRICE $50'
+                price: '50pln'
             },
         ],
         field: getField
@@ -133,7 +137,7 @@ const boardItems = [
         ],
         field: (color: string, name: string, price: string, fieldType: string, key: string) =>
             <Fragment key={key}>
-                <div className="just">Odwie-</div>
+                <div className="just">{boardView.just}</div>
                 <div className="drawing">
                     <GenericField elements={
                         <Fragment>
@@ -141,11 +145,11 @@ const boardItems = [
                                 <div className='bar'></div>
                                 <i className="person fa fa-frown-o"></i>
                             </div>
-                            <div className="name">ARESZT</div>
+                            <div className="name">{boardView.jail}</div>
                         </Fragment>
                     }/>
                 </div>
-                <div className="visiting">dziny</div>
+                <div className="visiting">{boardView.visiting}</div>
             </Fragment>
     },
     {
@@ -155,13 +159,13 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'orange',
                 name: 'Studium języków obcych',
-                price: 'PRICE $200',
+                price: '200pln',
             },
             {
                 fieldType: 'propertyField',
                 color: 'orange',
                 name: 'Ośrodek Sportu',
-                price: 'PRICE $180'
+                price: '180pln'
             },
             {
                 fieldType: 'chanceField',
@@ -173,7 +177,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'orange',
                 name: 'Centrum Nowych Technologii',
-                price: 'PRICE $180'
+                price: '180pln'
             },
             {
                 fieldType: 'stationField',
@@ -185,13 +189,13 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'purple',
                 name: 'Biblioteka Politechniki Śląskiej',
-                price: 'PRICE $160'
+                price: '160pln'
             },
             {
                 fieldType: 'propertyField',
                 color: 'purple',
                 name: 'Łąka igrowa',
-                price: 'PRICE $140'
+                price: '140pln'
             },
             {
                 fieldType: 'chestField',
@@ -203,7 +207,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'purple',
                 name: 'Rektorat Politechniki Śląskiej',
-                price: 'PRICE $140'
+                price: '140pln'
             },
         ],
         field: getField
@@ -225,8 +229,8 @@ const boardItems = [
                         <i className="drawing fa fa-car">
                             <DirectionsCarIcon style={{width: '3em', height: '3em'}} />
                         </i>
-                        <div className="name">Darmowy</div>
-                        <div className="name">Parking</div>
+                        <div className="name">{boardView.parking}</div>
+                        <div className="name">{boardView.OSIR}</div>
                     </Fragment>
                 }/>
             </Fragment>
@@ -238,7 +242,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'red',
                 name: 'Inżynieria Środowiska i Energetyki',
-                price: 'PRICE $220',
+                price: '220pln',
             },
             {
                 fieldType: 'chanceField',
@@ -256,7 +260,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'red',
                 name: 'Transport i Inżynieria Lotnicza',
-                price: 'PRICE $220'
+                price: '220pln'
             },
             {
                 fieldType: 'stationField',
@@ -268,13 +272,13 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'yellow',
                 name: 'Geometria i Grafika Inżynierska',
-                price: 'PRICE $200'
+                price: '200pln'
             },
             {
                 fieldType: 'propertyField',
                 color: 'yellow',
                 name: 'Wydział Inżynierii Bio-\nmedycznej',
-                price: 'PRICE $260'
+                price: '260pln'
             },
             {
                 fieldType: 'chestField',
@@ -286,7 +290,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'yellow',
                 name: 'Wydział Chemiczny',
-                price: 'PRICE $260'
+                price: '260pln'
             },
         ],
         field: getField
@@ -308,9 +312,9 @@ const boardItems = [
                         <i className="drawing fa fa-gavel">
                             <LocalPoliceIcon style={{width: '2em', height: '2em'}} />
                         </i>
-                        <div className="name">Idziesz</div>
-                        <div className="name">Do</div>
-                        <div className="name">Więzienia</div>
+                        <div className="name">{boardView.goToJail[0]}</div>
+                        <div className="name">{boardView.goToJail[1]}</div>
+                        <div className="name">{boardView.goToJail[2]}</div>
                     </Fragment>
                 }/>
             </Fragment>
@@ -322,13 +326,13 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'green',
                 name: 'Wydział Budo-\nwnictwa',
-                price: 'PRICE $300',
+                price: '300pln',
             },
             {
                 fieldType: 'propertyField',
                 color: 'green',
                 name: 'Wydział Mechaniczny Techno-\nlogiczny',
-                price: 'PRICE $300',
+                price: '300pln',
             },
             {
                 fieldType: 'chestField',
@@ -340,7 +344,7 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'green',
                 name: 'Wydział Architektury',
-                price: 'PRICE $320'
+                price: '320pln'
             },
             {
                 fieldType: 'stationField',
@@ -358,19 +362,19 @@ const boardItems = [
                 fieldType: 'propertyField',
                 color: 'dark-blue',
                 name: 'Wydział Matematyki Stosowanej',
-                price: 'PRICE $350'
+                price: '350pln'
             },
             {
                 fieldType: 'taxField',
                 color: '',
                 name: 'Podatek od studiowania',
-                price: 'Pay $75.00'
+                price: '75pln'
             },
             {
                 fieldType: 'propertyField',
                 color: 'dark-blue',
                 name: 'Wydział AEII',
-                price: 'PRICE $400'
+                price: '400pln'
             },
         ],
         field: getField
@@ -378,7 +382,27 @@ const boardItems = [
 ]
 
 export const BoardView:FC<IBoardViewProps> = ({socket}) => {
-    return(
+    const [players, setPlayers] = useState<IUser[]>([]);
+
+    useEffect(() => {
+        socket.on("playerJoinedRoom", (newUser: IUser) => {
+            console.log('playerJoinedRoom - BoardView', newUser);
+            setPlayers(arr => [...arr, newUser]);
+        });
+
+        socket.on('playerReconnected', (newUser: IUser) => {
+            console.log('playerReconnected - BoardView', newUser);
+            setPlayers(arr => [...arr, newUser]);
+        });
+
+        socket.on('onDisconnect', (disconectedUser: IUser) => {
+            console.log('onDisconnect - BoardView', disconectedUser);
+            setPlayers(arr => arr.filter(item => item.userId !== disconectedUser.userId));
+        });
+        
+    }, []);
+
+    return (
         <div className="table">
             <div className="board">
                 <CenterBoard socket={socket}/>
@@ -390,7 +414,7 @@ export const BoardView:FC<IBoardViewProps> = ({socket}) => {
                                     item.properties?.length &&
                                     item.properties.map((property, index) => {
                                         // console.log(property, index);
-                                        return item.field(property.color, property.name, property.price, property.fieldType, property.name + index);
+                                        return item.field(property.color, property.name, property.price, property.fieldType, property.name + index, players.map(({colorPawn}) => colorPawn));
                                     })
                                 }
                             </div>

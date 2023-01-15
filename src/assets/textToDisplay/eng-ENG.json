@@ -1,0 +1,54 @@
+{
+    "general": {
+        "startGame": "Start Game",
+        "submit": "Submit",
+        "send": "Send", 
+        "start": "Start",
+        "yourUsername": "Your Username"
+    },
+    "UserAlreadyExists": {
+        "userExists": "This user already exists",
+        "tryAgain": "Refresh browser and try type another name..."
+    },
+    "fullRoom": {
+        "fullRoomMessg": "Unfortunately this room is full :(",
+        "waitOrLeave": "Wait for someone to leave the room and try again or try to join another one"
+    },
+    "panelManager": {
+        "selectPlayers": "Select number of players",
+        "players": "players"
+    },
+    "noConnection": {
+        "noConnection": "No connection :/",
+        "tryAgain": "Try again..."
+    },
+    "waitingRoom": {
+        "hello": "Hey",
+        "copyAndPasteUrl": ", copy and paste the URL below to send to your friends:",
+        "waitingForOtherOpponents": "Waiting for other opponents to join the game..."
+    },
+    "boardView": {
+        "startFieldInstruction": "Zgarnij 200pln",
+        "just": "Just",
+        "visiting": "Visiting",
+        "jail": "Jail",
+        "parking": "Parking",
+        "OSIR": "OSIR",
+        "goToJail": ["Go", "To", "Jail"],
+        "stationFieldPrice": "200pln"
+    },
+    "SelectPawnView": {
+        "select": "select a pawn"
+    },
+    "chatView": {
+        "IJoinedTheRoom": "(me) has joined the room!",
+        "HeHasJoinedTheRoom": "has joined the room!",
+        "HeHasLeftTheRoom": "has left the room!",
+        "typeYourMessage": "Type your message here..."
+    },
+    "controlPanelView": {
+        "numberDrawn": "Number drawn",
+        "drawNumber": "Draw a number",
+        "money": "Available funds"
+    }
+}

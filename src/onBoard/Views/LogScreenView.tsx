@@ -3,6 +3,9 @@ import { Stack } from "@mui/system";
 import { keyboardKey } from "@testing-library/user-event";
 import { FC } from "react";
 import { StyledButton } from "../../components/BasicButton";
+import textToDisplayPL from '../../assets/textToDisplay/pl-PL.json';
+
+const { general } = textToDisplayPL;
 
 interface ILogScreenProps{
     onClickBtn: () => void;
@@ -16,12 +19,12 @@ export const LogScreenView: FC<ILogScreenProps> = ({onClickBtn, onChangeInput, i
     }
 
     return (
-    <Stack alignItems={'center'} top='26%' position={'relative'}>
-        <Stack sx={{background: '#276350'}} alignItems={'center'} padding={'50px'} borderRadius={'10%'}>
-            <Typography variant="h3" color={'white'}>Your Username</Typography>
-            <Input sx={{width: '240px', background: '#ffffff', margin: '50px'}} type="text" onKeyDown={handleKeyDown} onChange={(event) => onChangeInput(event)} required/>
-            <StyledButton disabled={isDisabled} onClick={onClickBtn} sx={{padding: '5px', marginBottom: '50px'}}>Submit</StyledButton>
+        <Stack alignItems={'center'} top='26%' position={'relative'}>
+            <Stack sx={{background: '#276350'}} alignItems={'center'} padding={'50px'} borderRadius={'10%'}>
+                <Typography variant="h3" color={'white'}>{general.yourUsername}</Typography>
+                <Input sx={{width: '240px', background: '#ffffff', margin: '50px'}} type="text" onKeyDown={handleKeyDown} onChange={(event) => onChangeInput(event)} required/>
+                <StyledButton disabled={isDisabled} onClick={onClickBtn} sx={{padding: '5px', marginBottom: '50px'}}>{general.submit}</StyledButton>
+            </Stack>
         </Stack>
-    </Stack>
     )
 }
