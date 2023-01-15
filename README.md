@@ -12,19 +12,14 @@ $ npm install
 
 In the project directory, you can run:
 
-### Development
+### Development watch mode
 ```bash
-$ npm run start
-```
-
-### Watch mode
-```bash
-$ npm run start:dev
+$ npm start
 ```
 
 ### Production mode
 ```bash
-$ npm run start:prod
+$ npm run build
 ```
 
 # About Project
