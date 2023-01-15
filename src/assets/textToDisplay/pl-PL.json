@@ -45,5 +45,10 @@
         "HeHasJoinedTheRoom": "dołączył do pokoju!",
         "HeHasLeftTheRoom": "opuścił pokój!",
         "typeYourMessage": "Wpisz tutaj swoją wiadomość..."
+    },
+    "controlPanelView": {
+        "numberDrawn": "Wylosowana liczba",
+        "drawNumber": "Losuj liczbę",
+        "money": "Dostępne środki"
     }
 }

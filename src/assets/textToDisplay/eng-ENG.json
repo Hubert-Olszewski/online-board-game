@@ -45,5 +45,10 @@
         "HeHasJoinedTheRoom": "has joined the room!",
         "HeHasLeftTheRoom": "has left the room!",
         "typeYourMessage": "Type your message here..."
+    },
+    "controlPanelView": {
+        "numberDrawn": "Number drawn",
+        "drawNumber": "Draw a number",
+        "money": "Available funds"
     }
 }
