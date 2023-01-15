@@ -2,7 +2,7 @@ import { Socket } from "socket.io-client";
 import { Stack } from "@mui/material";
 import { CenterBoard } from "../BoardComponents/CenterBoard/CenterBoard";
 import { GenericField } from "../BoardComponents/GenericField";
-import { FC, Fragment } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { PropertyField } from "../BoardComponents/PropertyField";
 import { ChanceField } from "../BoardComponents/ChanceField";
 import { StationField } from "../BoardComponents/StationField";
@@ -11,6 +11,8 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
 import '../../styles/BoardView.scss';
 import textToDisplayPL from '../../assets/textToDisplay/pl-PL.json';
+import { IUser } from '../../App';
+import { getPawnImage } from "./SelectPawnView";
 
 interface IBoardViewProps {
     socket: Socket;
@@ -52,7 +54,7 @@ const boardItems = [
                 price: '',
             },
         ],
-        field: (color: string, name: string, price: string, fieldType: string, key: string) =>
+        field: (color: string, name: string, price: string, fieldType: string, key: string, pawns: string[]) =>
             <Fragment key={key}>
                 <GenericField elements={
                     <Fragment>
@@ -60,7 +62,7 @@ const boardItems = [
                         <Stack className="go-word">{general.start}</Stack>
                     </Fragment>
                 }/>
-                <Stack className="arrow fa fa-long-arrow-left"></Stack>
+                {pawns.map(it => <img key={it} className="corner-field-pawn" alt={it} src={getPawnImage(it)} />)}
             </Fragment>
     },
     {
@@ -379,24 +381,46 @@ const boardItems = [
     },
 ]
 
-export const BoardView:FC<IBoardViewProps> = ({socket}) => (
-    <div className="table">
-        <div className="board">
-            <CenterBoard socket={socket}/>
-                {
-                    boardItems.map((item, idx) => {
-                        // console.log(item, idx);
-                        return <div key={idx} className={item.containerClassName}>
-                            {
-                                item.properties?.length &&
-                                item.properties.map((property, index) => {
-                                    // console.log(property, index);
-                                    return item.field(property.color, property.name, property.price, property.fieldType, property.name + index);
-                                })
-                            }
-                        </div>
-                    })
-                }
+export const BoardView:FC<IBoardViewProps> = ({socket}) => {
+    const [players, setPlayers] = useState<IUser[]>([]);
+
+    useEffect(() => {
+        socket.on("playerJoinedRoom", (newUser: IUser) => {
+            console.log('playerJoinedRoom - BoardView', newUser);
+            setPlayers(arr => [...arr, newUser]);
+        });
+
+        socket.on('playerReconnected', (newUser: IUser) => {
+            console.log('playerReconnected - BoardView', newUser);
+            setPlayers(arr => [...arr, newUser]);
+        });
+
+        socket.on('onDisconnect', (disconectedUser: IUser) => {
+            console.log('onDisconnect - BoardView', disconectedUser);
+            setPlayers(arr => arr.filter(item => item.userId !== disconectedUser.userId));
+        });
+        
+    }, []);
+
+    return (
+        <div className="table">
+            <div className="board">
+                <CenterBoard socket={socket}/>
+                    {
+                        boardItems.map((item, idx) => {
+                            // console.log(item, idx);
+                            return <div key={idx} className={item.containerClassName}>
+                                {
+                                    item.properties?.length &&
+                                    item.properties.map((property, index) => {
+                                        // console.log(property, index);
+                                        return item.field(property.color, property.name, property.price, property.fieldType, property.name + index, players.map(({colorPawn}) => colorPawn));
+                                    })
+                                }
+                            </div>
+                        })
+                    }
+            </div>
         </div>
-    </div>
-);
+    );
+}
