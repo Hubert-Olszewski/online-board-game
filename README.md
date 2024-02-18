@@ -1,20 +1,18 @@
 ## Description
 Link to the [backend](https://github.com/Hubert-Olszewski/online-board-game-backend)
 
+## Running the app
+In the project directory:
+
 ## Installation
 
-In the project directory:
 ```bash
 $ npm install
 ```
 
-## Running the app
-
-In the project directory, you can run:
-
 ### Development watch mode
 ```bash
-$ npm start
+$ npm run dev
 ```
 
 ### Production mode
